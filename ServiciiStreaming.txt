@@ -1,0 +1,208 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class ServiciiStreaming {
+	const  float pretPlatforma;
+	float pret;
+	int nrFilme;
+	string* colectie;
+public:
+	ServiciiStreaming() :pretPlatforma(0) {
+		this->pret = 0;
+		this->nrFilme = 0;
+		this->colectie = NULL;
+		
+	}
+	ServiciiStreaming(float pret, int nrFilme, string* colectie) :pretPlatforma(15) {
+		this->pret = pret;
+		this->nrFilme = nrFilme;
+		this->colectie = new string[this->nrFilme];
+		for (int i = 0; i < this->nrFilme; i++) {
+			this->colectie[i] = colectie[i];
+		}
+	}
+	ServiciiStreaming (const ServiciiStreaming &s) :pretPlatforma(s.pretPlatforma)
+	{
+		this->pret = s.pret;
+		this->nrFilme = s.nrFilme;
+		this->colectie = new string[this->nrFilme];
+		for (int i = 0; i < this->nrFilme; i++) {
+			this->colectie[i] = s.colectie[i];
+		}
+	}
+	
+	ServiciiStreaming& operator=(const ServiciiStreaming &s) {
+		if (this != &s) {
+			if (this->colectie != NULL) {
+				delete[]this->colectie;
+			}
+			this->pret = s.pret;
+			this->nrFilme = s.nrFilme;
+			this->colectie = new string[this->nrFilme];
+			for (int i = 0; i < this->nrFilme; i++) {
+				this->colectie[i] = s.colectie[i];
+			}
+		}
+		return *this;
+	}
+	float getPretPl() {
+		return this->pretPlatforma;
+	}
+	float getPret() {
+		return this->pret;
+	}
+	int getNr() {
+		return this->nrFilme;
+	}
+	string* getColectie() {
+		return this->colectie;
+	}
+	void setPret(float pret) {
+		this->pret = pret;
+	}
+	void setNrColectie(int nrFilme, string* colectie) {
+		if (this->colectie != NULL) {
+			delete[]this->colectie;
+		}
+		this->nrFilme = nrFilme;
+		this->colectie = new string[this->nrFilme];
+		for (int i = 0; i < this->nrFilme; i++) {
+			this->colectie[i] = colectie[i];
+		}
+	}
+	friend ostream& operator<<(ostream &out, const ServiciiStreaming &s) {
+		out << s.pretPlatforma << endl;
+		out << s.pret << endl;
+		out << s.nrFilme << endl;
+		for (int i = 0; i < s.nrFilme; i++) {
+			out << s.colectie[i]<<endl;
+		}
+		return out;
+	}
+	ServiciiStreaming& operator+=(string c) {
+		ServiciiStreaming copie = *this;
+		if (this->colectie != NULL) {
+			delete[]this->colectie;
+		}
+		this->nrFilme++;
+		this->colectie = new string[this->nrFilme];
+		for (int i = 0; i < copie.nrFilme; i++) {
+			this->colectie[i] = copie.colectie[i];
+		}
+		this->colectie[this->nrFilme - 1] = c;
+		return *this;
+	}
+	ServiciiStreaming& operator-=(string l) {
+		ServiciiStreaming copie = *this;
+		int vb = 0;
+		for (int i = 0; i < this->nrFilme; i++) {
+			if (colectie[i] == l) {
+				vb++;
+			}
+		}
+		if (this->colectie != NULL) {
+			delete[]this->colectie;
+		}
+		this->nrFilme = this->nrFilme - vb;
+		this->colectie = new string[this->nrFilme];
+		int poz = 0;
+		for (int i = 0; i < copie.nrFilme; i++) {
+			if (copie.colectie[i] != l) {
+				this->colectie[poz] = copie.colectie[i];
+				poz++;
+			}
+		}
+		return *this;
+	}
+
+	friend istream& operator>>(istream& in, ServiciiStreaming &s) {
+		if (s.colectie != NULL) {
+			delete[]s.colectie;
+		}
+		in >> s.pret;
+		in >> s.nrFilme;
+		s.colectie = new string[s.nrFilme];
+		for (int i = 0; i < s.nrFilme; i++) {
+			in >> s.colectie[i];
+		}
+		return in;
+	}
+	explicit operator double() {
+		return pret;
+	}
+	
+
+
+
+	~ServiciiStreaming() {
+		if (this->colectie != NULL) {
+			delete[]this->colectie;
+		}
+	}
+
+};
+class Film:public ServiciiStreaming {
+		int nrServicii;
+		ServiciiStreaming* servicii;
+public:
+	Film() {
+		this->nrServicii = 0;
+		this->servicii = NULL;
+	}
+	Film(float pret, int nrFilme, string* colectie, int nrServicii, ServiciiStreaming servicii) :ServiciiStreaming(pret, nrFilme, colectie) {
+		this->nrServicii = nrServicii;
+		this->servicii = new ServiciiStreaming[this->nrServicii];
+		for (int i = 0; i < this->nrServicii; i++) {
+			this->servicii[i] = servicii[i];
+		}
+	}
+	Film(const Film &f) :ServiciiStreaming(&f) {
+		
+		this->nrServicii = f.nrServicii;
+		this->servicii = new ServiciiStreaming[this->nrServicii];
+		for (int i = 0; i < this->nrServicii; i++) {
+			this->servicii[i] = f.servicii[i];
+		}
+	}
+	~Film() {
+		if (this->servicii != NULL) {
+			delete[]this->servicii;
+		}
+	}
+
+};
+int main() {
+	ServiciiStreaming s;
+	ServiciiStreaming s1(125, 2, new string[2]{"horror","comedy" });
+	cout << s << endl << "cu parametri" << endl;
+	cout << s1 << endl;
+		cout<< s1;
+	cout << "Apelam getterii" << endl;
+	cout << s1.getPretPl() << endl;
+	cout << s1.getPret() << endl;
+	cout << s1.getNr() << endl;
+	for(int i=0;i<s1.getNr();i++){
+		cout << s1.getColectie()[i]<<endl;
+	}
+	cout << "apelam setterii" << endl;
+	s1.setPret(63);
+	s1.setNrColectie(4, new string[4]{ "b","z","l","f" });
+	cout << "vedem ce a iesit" << endl;
+	cout << s1.getPretPl() << endl;
+	cout << s1.getPret() << endl;
+	cout << s1.getNr() << endl;
+	for (int i = 0; i < s1.getNr(); i++) {
+		cout << s1.getColectie()[i] << endl;
+	}
+	s1 += "vol";
+	cout << "operator+=";
+	cout << s1 << endl;
+	s1 -= "vol";
+	cout << "operator-=" << endl;
+	cout << s1 << endl;
+	double a = (double)s1;
+	return 0;
+}
